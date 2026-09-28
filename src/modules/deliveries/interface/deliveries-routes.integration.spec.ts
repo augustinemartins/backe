@@ -113,6 +113,15 @@ describe.skipIf(!dbAvailable)('deliveries routes (integration)', () => {
     expect(response.json<SuccessBody<{ status: string }>>().data.status).toBe('PENDING');
   });
 
+  it('rejects an unauthenticated single-delivery request', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/deliveries/1',
+    });
+
+    expect(response.statusCode).toBe(401);
+  });
+
   it('returns 404 for an unknown delivery', async () => {
     const response = await app.inject({ method: 'GET', url: '/api/v1/deliveries/999999999999999' });
 
