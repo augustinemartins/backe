@@ -139,6 +139,25 @@ describe.skipIf(!dbAvailable)('deliveries routes (integration)', () => {
     expect(response.statusCode).toBe(401);
   });
 
+  it('rejects an unauthenticated create-delivery request', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/v1/transactions/build/create-delivery',
+      payload: {
+        senderAddress: Keypair.random().publicKey(),
+        recipientAddress: Keypair.random().publicKey(),
+        origin: 'Lagos',
+        destination: 'Accra',
+        cargoCategory: 'GENERAL',
+        weightGrams: 500,
+        fragile: false,
+        estimatedDelivery: new Date().toISOString(),
+      },
+    });
+
+    expect(response.statusCode).toBe(401);
+  });
+
   // Regression coverage for the raise-dispute/raise-delivery-dispute route
   // collision (this endpoint previously had no HTTP-level coverage at all —
   // only a unit-level use-case-delegation test) — see
